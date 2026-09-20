@@ -37,8 +37,7 @@ class ItemCardapioControllerTest {
     @MockitoBean
     private ItemCardapioService service;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     @WithMockUser(roles = "ADMINISTRADOR")
