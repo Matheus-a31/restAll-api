@@ -4,8 +4,12 @@ import com.br.RestAll.cardapio.dto.ItemCardapioRequestDTO;
 import com.br.RestAll.cardapio.dto.ItemCardapioResponseDTO;
 import com.br.RestAll.cardapio.entity.ItemCardapio;
 import com.br.RestAll.cardapio.repository.ItemCardapioRepository;
+import com.br.RestAll.restaurante.entity.Restaurante;
+import com.br.RestAll.usuario.entity.Usuario;
+import com.br.RestAll.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,9 +21,23 @@ import java.util.List;
 public class ItemCardapioService {
 
     private final ItemCardapioRepository repository;
+    private final UsuarioRepository usuarioRepository;
+
+    private Restaurante getRestauranteDoUsuarioLogado() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não encontrado"));
+        
+        if (usuario.getRestaurante() == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não está associado a nenhum restaurante");
+        }
+        return usuario.getRestaurante();
+    }
 
     @Transactional
     public ItemCardapioResponseDTO criar(ItemCardapioRequestDTO dto) {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+
         ItemCardapio item = ItemCardapio.builder()
                 .nome(dto.nome())
                 .descricao(dto.descricao())
@@ -27,6 +45,7 @@ public class ItemCardapioService {
                 .preco(dto.preco())
                 .disponivel(dto.disponivel() != null ? dto.disponivel() : true)
                 .imagem(dto.imagem())
+                .restaurante(restaurante)
                 .build();
 
         ItemCardapio salvo = repository.save(item);
@@ -34,19 +53,20 @@ public class ItemCardapioService {
     }
 
     public List<ItemCardapioResponseDTO> listar() {
-        return repository.findAll().stream()
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        return repository.findByRestauranteId(restaurante.getId()).stream()
                 .map(ItemCardapioResponseDTO::fromEntity)
                 .toList();
     }
 
     public ItemCardapioResponseDTO buscarPorId(Long id) {
-        ItemCardapio item = getById(id);
+        ItemCardapio item = getByIdAndRestaurante(id);
         return ItemCardapioResponseDTO.fromEntity(item);
     }
 
     @Transactional
     public ItemCardapioResponseDTO atualizar(Long id, ItemCardapioRequestDTO dto) {
-        ItemCardapio item = getById(id);
+        ItemCardapio item = getByIdAndRestaurante(id);
         
         item.setNome(dto.nome());
         item.setDescricao(dto.descricao());
@@ -63,12 +83,13 @@ public class ItemCardapioService {
 
     @Transactional
     public void remover(Long id) {
-        ItemCardapio item = getById(id);
+        ItemCardapio item = getByIdAndRestaurante(id);
         repository.delete(item);
     }
 
-    private ItemCardapio getById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do cardápio não encontrado"));
+    private ItemCardapio getByIdAndRestaurante(Long id) {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        return repository.findByIdAndRestauranteId(id, restaurante.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do cardápio não encontrado ou não pertence ao seu restaurante"));
     }
 }

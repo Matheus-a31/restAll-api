@@ -4,11 +4,17 @@ import com.br.RestAll.cardapio.dto.ItemCardapioRequestDTO;
 import com.br.RestAll.cardapio.dto.ItemCardapioResponseDTO;
 import com.br.RestAll.cardapio.entity.ItemCardapio;
 import com.br.RestAll.cardapio.repository.ItemCardapioRepository;
+import com.br.RestAll.restaurante.entity.Restaurante;
+import com.br.RestAll.usuario.entity.Usuario;
+import com.br.RestAll.usuario.repository.UsuarioRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -25,17 +31,39 @@ class ItemCardapioServiceTest {
     @Mock
     private ItemCardapioRepository repository;
 
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
     @InjectMocks
     private ItemCardapioService service;
 
+    private Restaurante restaurante;
+    private Usuario usuarioLogado;
+
+    @BeforeEach
+    void setUp() {
+        restaurante = new Restaurante();
+        restaurante.setId(10L);
+
+        usuarioLogado = new Usuario();
+        usuarioLogado.setEmail("teste@restall.com.br");
+        usuarioLogado.setRestaurante(restaurante);
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("teste@restall.com.br", null)
+        );
+    }
+
     @Test
     void deveCriarItemCardapioComSucesso() {
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+
         ItemCardapioRequestDTO request = new ItemCardapioRequestDTO(
                 "Hambúrguer", "Delicioso", "Lanches", new BigDecimal("25.00"), true, "img.jpg");
 
         ItemCardapio salvo = ItemCardapio.builder()
                 .id(1L).nome("Hambúrguer").descricao("Delicioso").categoria("Lanches")
-                .preco(new BigDecimal("25.00")).disponivel(true).imagem("img.jpg").build();
+                .preco(new BigDecimal("25.00")).disponivel(true).imagem("img.jpg").restaurante(restaurante).build();
 
         when(repository.save(any(ItemCardapio.class))).thenReturn(salvo);
 
@@ -47,9 +75,11 @@ class ItemCardapioServiceTest {
     }
 
     @Test
-    void deveListarItensCardapio() {
-        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").build();
-        when(repository.findAll()).thenReturn(List.of(item));
+    void deveListarItensCardapioDoRestaurante() {
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+
+        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").restaurante(restaurante).build();
+        when(repository.findByRestauranteId(10L)).thenReturn(List.of(item));
 
         List<ItemCardapioResponseDTO> itens = service.listar();
 
@@ -60,8 +90,10 @@ class ItemCardapioServiceTest {
 
     @Test
     void deveBuscarPorIdComSucesso() {
-        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").build();
-        when(repository.findById(1L)).thenReturn(Optional.of(item));
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+
+        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").restaurante(restaurante).build();
+        when(repository.findByIdAndRestauranteId(1L, 10L)).thenReturn(Optional.of(item));
 
         ItemCardapioResponseDTO response = service.buscarPorId(1L);
 
@@ -70,16 +102,19 @@ class ItemCardapioServiceTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoNaoEncontrarPorId() {
-        when(repository.findById(1L)).thenReturn(Optional.empty());
+    void deveLancarExcecaoQuandoNaoEncontrarPorIdOuSerDeOutroRestaurante() {
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+        when(repository.findByIdAndRestauranteId(1L, 10L)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class, () -> service.buscarPorId(1L));
     }
 
     @Test
     void deveRemoverComSucesso() {
-        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").build();
-        when(repository.findById(1L)).thenReturn(Optional.of(item));
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+
+        ItemCardapio item = ItemCardapio.builder().id(1L).nome("Pizza").restaurante(restaurante).build();
+        when(repository.findByIdAndRestauranteId(1L, 10L)).thenReturn(Optional.of(item));
         doNothing().when(repository).delete(item);
 
         assertDoesNotThrow(() -> service.remover(1L));
