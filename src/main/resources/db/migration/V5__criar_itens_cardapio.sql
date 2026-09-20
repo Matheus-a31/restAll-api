@@ -1,0 +1,11 @@
+CREATE TABLE itens_cardapio (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    descricao TEXT,
+    categoria VARCHAR(100) NOT NULL,
+    preco DECIMAL(10, 2) NOT NULL,
+    disponivel BOOLEAN NOT NULL DEFAULT TRUE,
+    imagem VARCHAR(255),
+    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
