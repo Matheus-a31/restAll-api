@@ -52,20 +52,29 @@ src/main/java/com/br/RestAll/
    cd RestAll
    ```
 
-2. **Configure o Banco de Dados:**
+2. **Configuração das Variáveis de Ambiente (.env):**
+   Crie um arquivo `.env` na raiz do projeto para configurar o acesso ao banco e o JWT. Exemplo de conteúdo:
+   ```env
+   DB_URL=jdbc:postgresql://localhost:5432/restall_db
+   DB_USERNAME=usuario
+   DB_PASSWORD=senha
+   JWT_SECRET=sua-chave-secreta-muito-segura-aqui
+   ```
+
+3. **Configure o Banco de Dados:**
    Certifique-se de ter uma instância do PostgreSQL rodando. Se preferir, use o Docker:
    ```bash
    docker run --name restall-postgres -e POSTGRES_USER=usuario -e POSTGRES_PASSWORD=senha -e POSTGRES_DB=restall_db -p 5432:5432 -d postgres
    ```
    *Nota: Ajuste as credenciais no seu `src/main/resources/application.properties` (ou `.yml`) para corresponderem ao banco acima.*
 
-3. **Inicie a Aplicação:**
+4. **Inicie a Aplicação:**
    O Spring Boot com o Flyway irá criar e atualizar automaticamente as tabelas do banco de dados ao inicializar.
    ```bash
    mvn spring-boot:run
    ```
 
-4. **Explore a API (Swagger):**
+5. **Explore a API (Swagger):**
    Com a aplicação em execução, abra o navegador e acesse a documentação interativa para testar os endpoints:
     [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) *(a porta pode variar conforme sua configuração)*.
 
