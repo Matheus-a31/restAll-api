@@ -33,3 +33,5 @@ build/
 .vscode/
 .agent/
 .env
+bin/
+ChaveRestAll.pem
