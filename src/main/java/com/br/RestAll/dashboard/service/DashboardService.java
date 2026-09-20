@@ -45,39 +45,45 @@ public class DashboardService {
         return usuario.getRestaurante();
     }
 
-    public DashboardResponse getDashboardData(PeriodoDashboard periodo) {
+    public DashboardResponse getDashboardData(PeriodoDashboard periodo, LocalDate dataInicio, LocalDate dataFim) {
         Restaurante restaurante = getRestauranteDoUsuarioLogado();
         Long restauranteId = restaurante.getId();
 
-        LocalDate dataInicioDate;
-        LocalDate dataFimDate = LocalDate.now();
+        LocalDate inicioData;
+        LocalDate fimData;
 
-        switch (periodo) {
-            case DIA:
-                dataInicioDate = dataFimDate;
-                break;
-            case SEMANA:
-                dataInicioDate = dataFimDate.minusDays(7);
-                break;
-            case MES:
-                dataInicioDate = dataFimDate.with(TemporalAdjusters.firstDayOfMonth());
-                break;
-            case ANO:
-                dataInicioDate = dataFimDate.with(TemporalAdjusters.firstDayOfYear());
-                break;
-            default:
-                dataInicioDate = dataFimDate;
+        if (dataInicio != null && dataFim != null) {
+            inicioData = dataInicio;
+            fimData = dataFim;
+        } else {
+            fimData = LocalDate.now();
+            switch (periodo) {
+                case DIA:
+                    inicioData = fimData;
+                    break;
+                case SEMANA:
+                    inicioData = fimData.minusDays(7);
+                    break;
+                case MES:
+                    inicioData = fimData.with(TemporalAdjusters.firstDayOfMonth());
+                    break;
+                case ANO:
+                    inicioData = fimData.with(TemporalAdjusters.firstDayOfYear());
+                    break;
+                default:
+                    inicioData = fimData;
+            }
         }
 
-        LocalDateTime inicio = dataInicioDate.atStartOfDay();
-        LocalDateTime fim = dataFimDate.atTime(LocalTime.MAX);
+        LocalDateTime inicio = inicioData.atStartOfDay();
+        LocalDateTime fim = fimData.atTime(LocalTime.MAX);
 
         // 1. Receita (Vendas)
         BigDecimal totalVendido = comandaRepository.sumValorTotalByRestauranteIdAndDataAberturaBetween(restauranteId, inicio, fim);
         if (totalVendido == null) totalVendido = BigDecimal.ZERO;
 
         // 2. Despesas
-        BigDecimal totalDespesas = despesaRepository.sumValorByRestauranteIdAndDataDespesaBetween(restauranteId, dataInicioDate, dataFimDate);
+        BigDecimal totalDespesas = despesaRepository.sumValorByRestauranteIdAndDataDespesaBetween(restauranteId, inicioData, fimData);
         if (totalDespesas == null) totalDespesas = BigDecimal.ZERO;
 
         // 3. Lucro
