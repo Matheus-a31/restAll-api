@@ -21,6 +21,8 @@ jobs:
 
       - name: Run tests
         run: mvn clean test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   build-and-deploy:
     name: Build and Deploy
@@ -81,3 +83,4 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
