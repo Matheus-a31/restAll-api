@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: restall-api
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/restall
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - JWT_SECRET=${JWT_SECRET}
+      - SENDGRID=${SENDGRID}
+      - SENDGRID_EMAIL=${SENDGRID_EMAIL}
+    depends_on:
+      - db
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  db:
+    image: postgres:15-alpine
+    container_name: restall-db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: restall
+    ports:
+      - "5433:5432"
+    volumes:
+      - restall-pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  restall-pgdata:
