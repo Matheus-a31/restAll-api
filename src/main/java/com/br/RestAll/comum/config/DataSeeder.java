@@ -37,7 +37,11 @@ public class DataSeeder implements CommandLineRunner {
             usuarioRepository.save(novoAdmin);
             log.info("Usuário admin criado com sucesso.");
         } else {
-            log.info("Usuário admin já existe. Nenhuma ação necessária.");
+            log.info("Usuário admin já existe. Atualizando a senha para garantir o acesso...");
+            Usuario usuarioExistente = admin.get();
+            usuarioExistente.setSenha(passwordEncoder.encode("admin123"));
+            usuarioRepository.save(usuarioExistente);
+            log.info("Senha do admin atualizada com sucesso.");
         }
     }
 }
