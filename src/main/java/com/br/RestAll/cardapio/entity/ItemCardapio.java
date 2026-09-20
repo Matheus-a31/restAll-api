@@ -40,6 +40,10 @@ public class ItemCardapio {
     @Column
     private String imagem;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurante_id", nullable = false)
+    private com.br.RestAll.restaurante.entity.Restaurante restaurante;
+
     @CreationTimestamp
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
