@@ -65,7 +65,7 @@ jobs:
             sleep 2
 
             # Remove JARs antigos para evitar acúmulo de lixo
-            cd /home/ec2-user/app
+            cd //home/ubuntu/app
             find . -maxdepth 1 -name "*.jar" -mtime +0 -delete || true
 
             # Exporta variáveis de ambiente para o Spring Boot
