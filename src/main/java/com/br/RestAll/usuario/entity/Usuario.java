@@ -55,7 +55,7 @@ public class Usuario {
     @Column(name = "telefone", length = 20)
     private String telefone;
 
-    @Column(name = "ativo", nullable = false)
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
     @Builder.Default
     private Boolean ativo = true;
 }
