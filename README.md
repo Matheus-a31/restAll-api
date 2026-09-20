@@ -8,11 +8,11 @@ O **RestAll** foi projetado para resolver a complexidade do dia a dia de estabel
 Tudo isso suportado por uma arquitetura bem dividida em domínios, segurança via JWT, documentação automatizada via Swagger e uma base sólida de testes de integração usando Testcontainers.
 
 ##  Principais Funcionalidades
-- ** Gestão de Cardápio:** Cadastro, edição e consulta de itens (produtos, preços, descrições) disponíveis no restaurante.
-- ** Gestão de Comandas e Pedidos:** Abertura e fechamento de comandas por mesa ou cliente, e controle detalhado de cada pedido vinculado.
-- ** Autenticação e Segurança:** Controle de acesso baseado em perfis (roles) utilizando Spring Security e JSON Web Tokens (JJWT).
-- ** Gestão de Equipe e Restaurante:** Administração centralizada de funcionários (usuários) e das configurações base do estabelecimento.
-- ** Tratamento Global de Erros:** Respostas de erro padronizadas e amigáveis, facilitando imensamente a vida de quem for consumir a API no Frontend.
+- **Gestão de Cardápio:** Cadastro, edição e consulta de itens (produtos, preços, descrições) disponíveis no restaurante.
+- **Gestão de Comandas e Pedidos:** Abertura e fechamento de comandas por mesa ou cliente, e controle detalhado de cada pedido vinculado.
+- **Autenticação e Segurança:** Controle de acesso baseado em perfis (roles) utilizando Spring Security e JSON Web Tokens (JJWT).
+- **Gestão de Equipe e Restaurante:** Administração centralizada de funcionários (usuários) e das configurações base do estabelecimento.
+- **Tratamento Global de Erros:** Respostas de erro padronizadas e amigáveis, facilitando imensamente a vida de quem for consumir a API no Frontend.
 
 ##  Tecnologias Utilizadas
 - **Linguagem:** Java 21
@@ -48,7 +48,7 @@ src/main/java/com/br/RestAll/
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/seu-usuario/RestAll.git
+   git clone https://github.com/Matheus-a31/restAll-api.git
    cd RestAll
    ```
 
