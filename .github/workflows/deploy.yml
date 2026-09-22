@@ -42,15 +42,27 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Copy files to EC2
+      - name: Rename jar
+        run: mv target/*.jar target/app.jar
+
+      - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "target/*.jar,docker-compose.yml,Dockerfile"
+          source: "target/app.jar"
           target: "/home/ubuntu/restall/"
           strip_components: 1
+
+      - name: Copy Docker files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.yml,Dockerfile"
+          target: "/home/ubuntu/restall/"
 
       - name: Restart Application via Docker Compose
         uses: appleboy/ssh-action@v1.0.3
