@@ -11,6 +11,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - SENDGRID=${SENDGRID}
       - SENDGRID_EMAIL=${SENDGRID_EMAIL}
+      - SERVER_FORWARD_HEADERS_STRATEGY=framework
     depends_on:
       - db
     restart: unless-stopped
