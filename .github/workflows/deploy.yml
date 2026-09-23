@@ -84,7 +84,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,ADMIN_EMAIL,ADMIN_PASSWORD
+          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,ADMIN_EMAIL,ADMIN_PASSWORD,API_DOMAIN
           script: |
             cd /home/ubuntu/restall
             
@@ -94,6 +94,7 @@ jobs:
             echo "JWT_SECRET=$JWT_SECRET" >> .env
             echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env
             echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
+            echo "API_DOMAIN=$API_DOMAIN" >> .env
             
             sudo docker compose up -d --build
             sudo docker image prune -f
@@ -104,3 +105,4 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          API_DOMAIN: ${{ secrets.API_DOMAIN }}
