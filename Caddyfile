@@ -1,4 +1,4 @@
-restall.duckdns.org {
+{$API_DOMAIN} {
     # Headers de Segurança
     header {
         # Evita Clickjacking
