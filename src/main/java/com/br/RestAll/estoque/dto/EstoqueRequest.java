@@ -1,5 +1,6 @@
 package com.br.RestAll.estoque.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.validation.constraints.NotBlank;
@@ -27,5 +28,5 @@ public class EstoqueRequest {
 
     @NotNull(message = "O valor não pode ser nulo")
     @Positive(message = "O valor deve ser positivo")
-    private Double precoUnitario;
+    private BigDecimal precoUnitario;
 }
