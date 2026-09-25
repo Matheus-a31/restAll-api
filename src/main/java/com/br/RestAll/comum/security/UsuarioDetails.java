@@ -19,10 +19,16 @@ public class UsuarioDetails implements UserDetails {
     private final String senha;
     private final Perfil perfil;
     private final Long restauranteId;
+    private final String cargo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
+        java.util.List<GrantedAuthority> authorities = new java.util.ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
+        if (cargo != null && cargo.equalsIgnoreCase("ESTOQUISTA")) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ESTOQUISTA"));
+        }
+        return authorities;
     }
 
     @Override

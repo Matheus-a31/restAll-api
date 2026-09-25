@@ -26,7 +26,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 usuario.getEmail(),
                 usuario.getSenha(),
                 usuario.getPerfil(),
-                restauranteId
+                restauranteId,
+                usuario.getCargo()
         );
     }
 }

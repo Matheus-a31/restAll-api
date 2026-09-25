@@ -60,7 +60,8 @@ public class AuthService {
                 usuario.getEmail(),
                 usuario.getSenha(),
                 usuario.getPerfil(),
-                usuario.getRestaurante() != null ? usuario.getRestaurante().getId() : null
+                usuario.getRestaurante() != null ? usuario.getRestaurante().getId() : null,
+                usuario.getCargo()
         );
         String token = tokenService.gerarToken(usuarioDetails);
 
