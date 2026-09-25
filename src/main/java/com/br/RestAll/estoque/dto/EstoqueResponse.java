@@ -18,5 +18,6 @@ public class EstoqueResponse {
     private String nomeProduto;
     private LocalDate dataValidade;
     private Integer quantidade;
+    private String unidadeMedida;
     private BigDecimal precoUnitario;
 }

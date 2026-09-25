@@ -24,6 +24,9 @@ public class EstoqueRequest {
 
     private LocalDate dataValidade;
 
+    @NotBlank(message = "A unidade de medida não pode estar em branco")
+    private String unidadeMedida;
+
     @Positive(message = "A quantidade deve ser positiva")
     private Integer quantidade;
 
