@@ -101,4 +101,10 @@ public class EstoqueService {
         return toResponse(atualizado);
     }
 
+    @Transactional
+    public void remover(Long id) {
+        Estoque estoque = getByIdAndRestaurante(id);
+        repository.delete(estoque);
+    }
+
 }
