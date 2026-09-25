@@ -80,12 +80,25 @@ public class EstoqueService {
         }
 
         return estoque;
-        
+
     }
 
     public EstoqueResponse buscarPorId(Long id) {
         Estoque estoque = getByIdAndRestaurante(id);
         return toResponse(estoque);
+    }
+
+    @Transactional
+    public EstoqueResponse atualizar(Long id, EstoqueRequest dto) {
+        Estoque estoque = getByIdAndRestaurante(id);
+
+        estoque.setNomeProduto(dto.getNomeProduto());
+        estoque.setDataValidade(dto.getDataValidade());
+        estoque.setQuantidade(dto.getQuantidade());
+        estoque.setPrecoUnitario(dto.getPrecoUnitario());
+
+        Estoque atualizado = repository.save(estoque);
+        return toResponse(atualizado);
     }
 
 }
