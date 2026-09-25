@@ -45,6 +45,7 @@ public class EstoqueService {
                 .nomeProduto(dto.getNomeProduto())
                 .dataValidade(dto.getDataValidade())
                 .quantidade(dto.getQuantidade())
+                .unidadeMedida(dto.getUnidadeMedida())
                 .precoUnitario(dto.getPrecoUnitario())
                 .restaurante(restaurante)
                 .build();
@@ -59,6 +60,7 @@ public class EstoqueService {
                 .nomeProduto(estoque.getNomeProduto())
                 .dataValidade(estoque.getDataValidade())
                 .quantidade(estoque.getQuantidade())
+                .unidadeMedida(estoque.getUnidadeMedida())
                 .precoUnitario(estoque.getPrecoUnitario())
                 .build();
     }
@@ -95,6 +97,7 @@ public class EstoqueService {
         estoque.setNomeProduto(dto.getNomeProduto());
         estoque.setDataValidade(dto.getDataValidade());
         estoque.setQuantidade(dto.getQuantidade());
+        estoque.setUnidadeMedida(dto.getUnidadeMedida());
         estoque.setPrecoUnitario(dto.getPrecoUnitario());
 
         Estoque atualizado = repository.save(estoque);
