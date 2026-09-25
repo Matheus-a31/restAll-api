@@ -26,21 +26,31 @@ public class Estoque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
 
-    @Column (nullable = false, length = 255)
+    @Column (name = "nome_produto", nullable = false, length = 255)
     private String nomeProduto;
 
-    @Column(name = "data_validade", nullable = false)
+    @Column(name = "data_validade")
     private LocalDate dataValidade;
 
     @Column(nullable = false)
     private Integer quantidade;
 
-    @Column (nullable = false)
+    @Column (name = "preco_unitario", nullable = false)
     private BigDecimal precoUnitario;
 
+    @Column(name = "unidade_medida", nullable = false, length = 50)
+    private String unidadeMedida;
+
+    @org.hibernate.annotations.CreationTimestamp
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    private java.time.LocalDateTime criadoEm;
+
+    @org.hibernate.annotations.UpdateTimestamp
+    @Column(name = "atualizado_em", nullable = false)
+    private java.time.LocalDateTime atualizadoEm;
 
 }
