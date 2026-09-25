@@ -1,5 +1,7 @@
 package com.br.RestAll.estoque.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -60,4 +62,30 @@ public class EstoqueService {
                 .precoUnitario(estoque.getPrecoUnitario())
                 .build();
     }
+
+    public List<EstoqueResponse> listar() {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        return repository.findByRestauranteId(restaurante.getId()).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private Estoque getByIdAndRestaurante(Long id) {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        Estoque estoque = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estoque não encontrado"));
+
+        if (!estoque.getRestaurante().getId().equals(restaurante.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Estoque não pertence ao restaurante do usuário");
+        }
+
+        return estoque;
+        
+    }
+
+    public EstoqueResponse buscarPorId(Long id) {
+        Estoque estoque = getByIdAndRestaurante(id);
+        return toResponse(estoque);
+    }
+
 }
