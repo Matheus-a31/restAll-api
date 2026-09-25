@@ -46,11 +46,14 @@ public class AuthService {
 
         // 2. Cria o Usuário (Dono)
         Usuario usuario = Usuario.builder()
-                .nome(request.getNomeUsuario())
+                .nome(request.getNome())
                 .email(request.getEmail())
                 .senha(passwordEncoder.encode(request.getSenha()))
                 .perfil(Perfil.DONO)
                 .restaurante(restaurante)
+                .cpf(request.getCpf())
+                .telefone(request.getTelefone())
+                .cargo(null)
                 .build();
         usuario = usuarioRepository.save(usuario);
 
