@@ -1,3 +1,18 @@
-restall.duckdns.org {
+{$API_DOMAIN} {
+    # Headers de Segurança
+    header {
+        # Evita Clickjacking
+        X-Frame-Options "DENY"
+        
+        # Evita MIME Sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # Força navegadores a usarem apenas HTTPS (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Oculta o cabeçalho 'Server'
+        -Server
+    }
+
     reverse_proxy api:8080
 }

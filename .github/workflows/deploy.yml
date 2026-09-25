@@ -29,7 +29,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8
         with:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
@@ -84,7 +84,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET
+          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,ADMIN_EMAIL,ADMIN_PASSWORD,API_DOMAIN
           script: |
             cd /home/ubuntu/restall
             
@@ -92,6 +92,9 @@ jobs:
             echo "DB_USERNAME=$DB_USERNAME" >> .env
             echo "DB_PASSWORD=$DB_PASSWORD" >> .env
             echo "JWT_SECRET=$JWT_SECRET" >> .env
+            echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env
+            echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
+            echo "API_DOMAIN=$API_DOMAIN" >> .env
             
             sudo docker compose up -d --build
             sudo docker image prune -f
@@ -100,3 +103,6 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          API_DOMAIN: ${{ secrets.API_DOMAIN }}
