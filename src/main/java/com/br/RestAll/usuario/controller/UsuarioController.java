@@ -54,6 +54,13 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.listarGerentes());
     }
 
+    @GetMapping("/dono")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Lista todos os donos (Acesso: ADMINISTRADOR)")
+    public ResponseEntity<java.util.List<UsuarioResponse>> listarDonos() {
+        return ResponseEntity.ok(usuarioService.listarDonos());
+    }
+
     @DeleteMapping("/funcionario/{id}")
     @PreAuthorize("hasAnyRole('DONO', 'GERENTE', 'ADMINISTRADOR')")
     @Operation(summary = "Remove um funcionário (Acesso: DONO, GERENTE, ADMINISTRADOR)")
