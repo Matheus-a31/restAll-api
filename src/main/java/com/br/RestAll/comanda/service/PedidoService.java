@@ -131,6 +131,59 @@ public class PedidoService {
         atualizarValorTotalComanda(comanda);
     }
 
+    public PedidoResponseDTO atualizar(Long id, PedidoRequestDTO dto) {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+
+        if (!pedido.getComanda().getRestaurante().getId().equals(restaurante.getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado.");
+        }
+
+        Comanda comanda = pedido.getComanda();
+        if (comanda.getStatus() != StatusComanda.ABERTA) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível atualizar pedidos de uma comanda que não está aberta.");
+        }
+
+        if (!pedido.getComanda().getId().equals(dto.comandaId())) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido alterar a comanda de um pedido existente.");
+        }
+
+        if (!pedido.getItem().getId().equals(dto.itemId())) {
+            ItemCardapio novoItem = itemCardapioRepository.findByIdAndRestauranteId(dto.itemId(), restaurante.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do cardápio não encontrado."));
+            pedido.setItem(novoItem);
+            pedido.setPrecoUnitario(novoItem.getPreco());
+        }
+
+        pedido.setQuantidade(dto.quantidade());
+        pedido.setObservacao(dto.observacao());
+        
+        BigDecimal valorTotal = pedido.getPrecoUnitario().multiply(new BigDecimal(pedido.getQuantidade()));
+        pedido.setValorTotal(valorTotal);
+
+        Pedido salvo = pedidoRepository.save(pedido);
+        atualizarValorTotalComanda(comanda);
+
+        return toDTO(salvo);
+    }
+
+    public PedidoResponseDTO atualizarStatus(Long id, StatusPedido status) {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+
+        if (!pedido.getComanda().getRestaurante().getId().equals(restaurante.getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado.");
+        }
+
+        pedido.setStatus(status);
+        Pedido salvo = pedidoRepository.save(pedido);
+        return toDTO(salvo);
+    }
+
     private void atualizarValorTotalComanda(Comanda comanda) {
         List<Pedido> pedidos = pedidoRepository.findByComandaId(comanda.getId());
         BigDecimal total = pedidos.stream()
