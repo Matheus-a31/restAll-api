@@ -53,4 +53,28 @@ public class UsuarioController {
     public ResponseEntity<java.util.List<UsuarioResponse>> listarGerentes() {
         return ResponseEntity.ok(usuarioService.listarGerentes());
     }
+
+    @DeleteMapping("/funcionario/{id}")
+    @PreAuthorize("hasAnyRole('DONO', 'GERENTE', 'ADMINISTRADOR')")
+    @Operation(summary = "Remove um funcionário (Acesso: DONO, GERENTE, ADMINISTRADOR)")
+    public ResponseEntity<Void> removerFuncionario(@PathVariable Long id) {
+        usuarioService.removerFuncionario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/gerente/{id}")
+    @PreAuthorize("hasAnyRole('DONO', 'ADMINISTRADOR')")
+    @Operation(summary = "Remove um gerente (Acesso: DONO, ADMINISTRADOR)")
+    public ResponseEntity<Void> removerGerente(@PathVariable Long id) {
+        usuarioService.removerGerente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/dono/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Remove um dono (Acesso: ADMINISTRADOR)")
+    public ResponseEntity<Void> removerDono(@PathVariable Long id) {
+        usuarioService.removerDono(id);
+        return ResponseEntity.noContent().build();
+    }
 }
