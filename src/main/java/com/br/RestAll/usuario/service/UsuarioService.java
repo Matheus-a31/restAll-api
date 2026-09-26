@@ -109,6 +109,18 @@ public class UsuarioService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public java.util.List<UsuarioResponse> listarDonos() {
+        Perfil meuPerfil = contextoRestaurante.getPerfil();
+        if (meuPerfil != Perfil.ADMINISTRADOR) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem listar os donos.");
+        }
+        return usuarioRepository.findByPerfil(Perfil.DONO)
+                .stream()
+                .map(UsuarioResponse::fromEntity)
+                .toList();
+    }
+
     @Transactional
     public void removerFuncionario(Long id) {
         removerUsuarioPorPerfil(id, Perfil.FUNCIONARIO);
