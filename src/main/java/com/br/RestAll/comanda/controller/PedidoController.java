@@ -40,4 +40,14 @@ public class PedidoController {
     public void remover(@PathVariable Long id) {
         service.remover(id);
     }
+
+    @PutMapping("/{id}")
+    public PedidoResponseDTO atualizar(@PathVariable Long id, @RequestBody @Valid PedidoRequestDTO dto) {
+        return service.atualizar(id, dto);
+    }
+
+    @PatchMapping("/{id}/status")
+    public PedidoResponseDTO atualizarStatus(@PathVariable Long id, @RequestParam com.br.RestAll.comanda.entity.StatusPedido status) {
+        return service.atualizarStatus(id, status);
+    }
 }
