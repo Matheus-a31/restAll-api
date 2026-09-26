@@ -108,4 +108,42 @@ public class UsuarioService {
                 .map(UsuarioResponse::fromEntity)
                 .toList();
     }
+
+    @Transactional
+    public void removerFuncionario(Long id) {
+        removerUsuarioPorPerfil(id, Perfil.FUNCIONARIO);
+    }
+
+    @Transactional
+    public void removerGerente(Long id) {
+        removerUsuarioPorPerfil(id, Perfil.GERENTE);
+    }
+
+    @Transactional
+    public void removerDono(Long id) {
+        removerUsuarioPorPerfil(id, Perfil.DONO);
+    }
+
+    private void removerUsuarioPorPerfil(Long id, Perfil perfilEsperado) {
+        Usuario usuarioParaRemover = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+
+        if (usuarioParaRemover.getPerfil() != perfilEsperado) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário selecionado não possui o perfil " + perfilEsperado + ".");
+        }
+
+        Perfil meuPerfil = contextoRestaurante.getPerfil();
+        Long meuRestauranteId = contextoRestaurante.getRestauranteId();
+
+        if (meuPerfil != Perfil.ADMINISTRADOR) {
+            if (meuRestauranteId == null) {
+                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seu usuário não está associado a um restaurante.");
+            }
+            if (usuarioParaRemover.getRestaurante() == null || !usuarioParaRemover.getRestaurante().getId().equals(meuRestauranteId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para remover usuários de outro restaurante.");
+            }
+        }
+
+        usuarioRepository.delete(usuarioParaRemover);
+    }
 }
