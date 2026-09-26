@@ -54,6 +54,13 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.listarGerentes());
     }
 
+    @GetMapping("/dono")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Lista todos os donos (Acesso: ADMINISTRADOR)")
+    public ResponseEntity<java.util.List<UsuarioResponse>> listarDonos() {
+        return ResponseEntity.ok(usuarioService.listarDonos());
+    }
+
     @DeleteMapping("/funcionario/{id}")
     @PreAuthorize("hasAnyRole('DONO', 'GERENTE', 'ADMINISTRADOR')")
     @Operation(summary = "Remove um funcionário (Acesso: DONO, GERENTE, ADMINISTRADOR)")
@@ -76,5 +83,19 @@ public class UsuarioController {
     public ResponseEntity<Void> removerDono(@PathVariable Long id) {
         usuarioService.removerDono(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/gerente/todos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Lista todos os gerentes independente de restaurante (Acesso: ADMINISTRADOR)")
+    public ResponseEntity<java.util.List<UsuarioResponse>> listarTodosGerentes() {
+        return ResponseEntity.ok(usuarioService.listarTodosGerentes());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
+    @Operation(summary = "Edita um usuário existente")
+    public ResponseEntity<UsuarioResponse> editarUsuario(@PathVariable Long id, @RequestBody com.br.RestAll.usuario.dto.AtualizarUsuarioRequest request) {
+        return ResponseEntity.ok(usuarioService.atualizarUsuario(id, request));
     }
 }

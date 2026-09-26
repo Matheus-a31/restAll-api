@@ -109,6 +109,30 @@ public class UsuarioService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public java.util.List<UsuarioResponse> listarTodosGerentes() {
+        Perfil meuPerfil = contextoRestaurante.getPerfil();
+        if (meuPerfil != Perfil.ADMINISTRADOR) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem listar todos os gerentes.");
+        }
+        return usuarioRepository.findByPerfil(Perfil.GERENTE)
+                .stream()
+                .map(UsuarioResponse::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<UsuarioResponse> listarDonos() {
+        Perfil meuPerfil = contextoRestaurante.getPerfil();
+        if (meuPerfil != Perfil.ADMINISTRADOR) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem listar os donos.");
+        }
+        return usuarioRepository.findByPerfil(Perfil.DONO)
+                .stream()
+                .map(UsuarioResponse::fromEntity)
+                .toList();
+    }
+
     @Transactional
     public void removerFuncionario(Long id) {
         removerUsuarioPorPerfil(id, Perfil.FUNCIONARIO);
@@ -145,5 +169,46 @@ public class UsuarioService {
         }
 
         usuarioRepository.delete(usuarioParaRemover);
+    }
+
+    @Transactional
+    public UsuarioResponse atualizarUsuario(Long id, com.br.RestAll.usuario.dto.AtualizarUsuarioRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+
+        Perfil meuPerfil = contextoRestaurante.getPerfil();
+        Long meuRestauranteId = contextoRestaurante.getRestauranteId();
+
+        if (meuPerfil != Perfil.ADMINISTRADOR) {
+            if (meuRestauranteId == null) {
+                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seu usuário não está associado a um restaurante.");
+            }
+            if (usuario.getRestaurante() == null || !usuario.getRestaurante().getId().equals(meuRestauranteId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para editar usuários de outro restaurante.");
+            }
+            // DONO pode editar GERENTE e FUNCIONARIO
+            // GERENTE pode editar FUNCIONARIO
+            if (meuPerfil == Perfil.GERENTE && usuario.getPerfil() != Perfil.FUNCIONARIO) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Gerentes só podem editar funcionários.");
+            }
+            if (meuPerfil == Perfil.FUNCIONARIO && !usuario.getId().equals(contextoRestaurante.getUsuarioId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Funcionários só podem editar seu próprio perfil.");
+            }
+        }
+
+        if (request.getNome() != null) usuario.setNome(request.getNome());
+        if (request.getEmail() != null) {
+            if (!request.getEmail().equals(usuario.getEmail()) && usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail já está em uso.");
+            }
+            usuario.setEmail(request.getEmail());
+        }
+        if (request.getCpf() != null) usuario.setCpf(request.getCpf());
+        if (request.getCargo() != null) usuario.setCargo(request.getCargo());
+        if (request.getTelefone() != null) usuario.setTelefone(request.getTelefone());
+        if (request.getAtivo() != null) usuario.setAtivo(request.getAtivo());
+
+        usuario = usuarioRepository.save(usuario);
+        return UsuarioResponse.fromEntity(usuario);
     }
 }
