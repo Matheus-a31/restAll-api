@@ -77,7 +77,7 @@ public class UsuarioService {
                 .perfil(perfil)
                 .restaurante(restaurante)
                 .cpf(request.getCpf())
-                .cargo(request.getCargo())
+                .cargo(perfil == Perfil.FUNCIONARIO ? request.getCargo() : null)
                 .telefone(request.getTelefone())
                 .build();
 

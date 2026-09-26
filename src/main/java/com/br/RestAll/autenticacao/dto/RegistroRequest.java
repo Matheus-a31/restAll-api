@@ -13,8 +13,8 @@ public class RegistroRequest {
     @NotBlank(message = "O CNPJ é obrigatório")
     private String cnpj;
 
-    @NotBlank(message = "O nome do usuário dono é obrigatório")
-    private String nomeUsuario;
+    @NotBlank(message = "O nome é obrigatório")
+    private String nome;
 
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "E-mail inválido")
@@ -22,4 +22,7 @@ public class RegistroRequest {
 
     @NotBlank(message = "A senha é obrigatória")
     private String senha;
+
+    private String cpf;
+    private String telefone;
 }
