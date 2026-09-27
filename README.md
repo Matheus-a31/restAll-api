@@ -11,7 +11,8 @@ Tudo isso suportado por uma arquitetura bem dividida em domínios, segurança vi
 - **Gestão de Cardápio:** Cadastro, edição e consulta de itens (produtos, preços, descrições) disponíveis no restaurante.
 - **Gestão de Comandas e Pedidos:** Abertura e fechamento de comandas por mesa ou cliente, e controle detalhado de cada pedido vinculado.
 - **Autenticação e Segurança:** Controle de acesso baseado em perfis (roles) utilizando Spring Security e JSON Web Tokens (JJWT).
-- **Gestão de Equipe e Restaurante:** Administração centralizada de funcionários (usuários) e das configurações base do estabelecimento.
+- **Gestão de Equipe e Restaurante:** Administração centralizada de funcionários (usuários, com atualização flexível de dados), gerenciamento das configurações do estabelecimento (via rota dedicada `/meu-restaurante`) e suporte à ativação/desativação de restaurantes (soft delete).
+- **Controle de Estoque e Despesas:** Gerenciamento de insumos, produtos e controle detalhado das saídas financeiras do estabelecimento.
 - **Tratamento Global de Erros:** Respostas de erro padronizadas e amigáveis, facilitando imensamente a vida de quem for consumir a API no Frontend.
 
 ##  Tecnologias Utilizadas
@@ -33,6 +34,8 @@ src/main/java/com/br/RestAll/
  ├── cardapio/        # Entidades, DTOs e Controllers dos itens do menu
  ├── comanda/         # Gerenciamento de comandas abertas e pedidos
  ├── comum/           # Configurações globais (ex: GlobalExceptionHandler, configs do Swagger)
+ ├── despesa/         # Controle financeiro, registros de saídas e gastos
+ ├── estoque/         # Gestão de produtos, insumos e controle de quantidades
  ├── restaurante/     # Informações core e configurações do estabelecimento
  └── usuario/         # Gestão dos usuários do sistema (administradores, garçons, caixas)
 ```
