@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 @RestController
 @RequestMapping("/restaurantes")
 @RequiredArgsConstructor
@@ -18,10 +18,24 @@ public class RestauranteController {
 
     private final RestauranteService restauranteService;
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Lista todos os restaurantes (Apenas Admin do Sistema)")
+    public ResponseEntity<List<RestauranteResponse>> listarTodos() {
+        return ResponseEntity.ok(restauranteService.listarTodos());
+    }
+
     @PutMapping("/meu-restaurante")
-    @PreAuthorize("hasAnyRole('DONO', 'ADMINISTRADOR')")
-    @Operation(summary = "Edita as informações do restaurante atual")
-    public ResponseEntity<RestauranteResponse> atualizarRestaurante(@RequestBody AtualizarRestauranteRequest request) {
-        return ResponseEntity.ok(restauranteService.atualizarRestaurante(request));
+    @PreAuthorize("hasRole('DONO')")
+    @Operation(summary = "Edita as informações do restaurante atual (Apenas Dono)")
+    public ResponseEntity<RestauranteResponse> atualizarMeuRestaurante(@RequestBody AtualizarRestauranteRequest request) {
+        return ResponseEntity.ok(restauranteService.atualizarMeuRestaurante(request));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Edita as informações de qualquer restaurante (Apenas Admin do Sistema)")
+    public ResponseEntity<RestauranteResponse> atualizarRestauranteComoAdmin(@PathVariable Long id, @RequestBody AtualizarRestauranteRequest request) {
+        return ResponseEntity.ok(restauranteService.atualizarRestauranteComoAdmin(id, request));
     }
 }
