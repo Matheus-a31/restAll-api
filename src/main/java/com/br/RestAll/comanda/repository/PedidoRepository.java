@@ -12,6 +12,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByComandaId(Long comandaId);
 
+    List<Pedido> findByComandaRestauranteId(Long restauranteId);
+
     @org.springframework.data.jpa.repository.Query("SELECT p.item.id AS itemId, p.item.nome AS nomeItem, SUM(p.quantidade) AS quantidade, SUM(p.valorTotal) AS receitaGerada " +
            "FROM Pedido p WHERE p.comanda.restaurante.id = :restauranteId AND p.dataPedido BETWEEN :inicio AND :fim " +
            "GROUP BY p.item.id, p.item.nome ORDER BY SUM(p.quantidade) DESC")
