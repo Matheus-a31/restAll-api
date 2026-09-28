@@ -92,7 +92,9 @@ class ItemCardapioControllerTest {
 
     @Test
     void deveNegarAcessoQuandoNaoAutenticado() throws Exception {
-        mockMvc.perform(get("/api/cardapio"))
+        mockMvc.perform(post("/api/cardapio")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
                 .andExpect(status().isForbidden());
     }
 }

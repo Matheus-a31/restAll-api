@@ -14,13 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cardapio")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
 public class ItemCardapioController {
 
     private final ItemCardapioService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
     public ItemCardapioResponseDTO criar(@RequestBody @Valid ItemCardapioRequestDTO dto) {
         return service.criar(dto);
     }
@@ -31,17 +31,20 @@ public class ItemCardapioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
     public ItemCardapioResponseDTO buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
     public ItemCardapioResponseDTO atualizar(@PathVariable Long id, @RequestBody @Valid ItemCardapioRequestDTO dto) {
         return service.atualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
     public void remover(@PathVariable Long id) {
         service.remover(id);
     }
