@@ -30,6 +30,11 @@ public class PedidoController {
         return service.listarPorComanda(comandaId);
     }
 
+    @GetMapping
+    public List<PedidoResponseDTO> listarTodos() {
+        return service.listarTodos();
+    }
+
     @GetMapping("/{id}")
     public PedidoResponseDTO buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
