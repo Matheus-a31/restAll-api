@@ -97,6 +97,15 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
+    public List<PedidoResponseDTO> listarTodos() {
+        Restaurante restaurante = getRestauranteDoUsuarioLogado();
+        
+        return pedidoRepository.findByComandaRestauranteId(restaurante.getId())
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public PedidoResponseDTO buscarPorId(Long id) {
         Restaurante restaurante = getRestauranteDoUsuarioLogado();
         
