@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import com.br.RestAll.aws.S3Service;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class ItemCardapioService {
 
     private final ItemCardapioRepository repository;
     private final UsuarioRepository usuarioRepository;
+    private final S3Service s3Service;
 
     private Restaurante getRestauranteDoUsuarioLogado() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -35,8 +38,13 @@ public class ItemCardapioService {
     }
 
     @Transactional
-    public ItemCardapioResponseDTO criar(ItemCardapioRequestDTO dto) {
+    public ItemCardapioResponseDTO criar(ItemCardapioRequestDTO dto, MultipartFile file) {
         Restaurante restaurante = getRestauranteDoUsuarioLogado();
+
+        String urlImagem = dto.imagem();
+        if (file != null && !file.isEmpty()) {
+            urlImagem = s3Service.uploadFile(file);
+        }
 
         ItemCardapio item = ItemCardapio.builder()
                 .nome(dto.nome())
@@ -44,7 +52,7 @@ public class ItemCardapioService {
                 .categoria(dto.categoria())
                 .preco(dto.preco())
                 .disponivel(dto.disponivel() != null ? dto.disponivel() : true)
-                .imagem(dto.imagem())
+                .imagem(urlImagem)
                 .restaurante(restaurante)
                 .build();
 
@@ -65,7 +73,7 @@ public class ItemCardapioService {
     }
 
     @Transactional
-    public ItemCardapioResponseDTO atualizar(Long id, ItemCardapioRequestDTO dto) {
+    public ItemCardapioResponseDTO atualizar(Long id, ItemCardapioRequestDTO dto, MultipartFile file) {
         ItemCardapio item = getByIdAndRestaurante(id);
         
         item.setNome(dto.nome());
@@ -75,7 +83,12 @@ public class ItemCardapioService {
         if (dto.disponivel() != null) {
             item.setDisponivel(dto.disponivel());
         }
-        item.setImagem(dto.imagem());
+        
+        if (file != null && !file.isEmpty()) {
+            item.setImagem(s3Service.uploadFile(file));
+        } else if (dto.imagem() != null) {
+            item.setImagem(dto.imagem());
+        }
 
         ItemCardapio atualizado = repository.save(item);
         return ItemCardapioResponseDTO.fromEntity(atualizado);
