@@ -76,6 +76,18 @@ class PedidoControllerTest {
 
     @Test
     @WithMockUser(roles = "GERENTE")
+    void deveListarTodosPedidos() throws Exception {
+        PedidoResponseDTO response = new PedidoResponseDTO(1L, 1L, 2L, 2, "Sem cebola", StatusPedido.PREPARANDO, new BigDecimal("20.00"), new BigDecimal("40.00"), LocalDateTime.now());
+
+        when(service.listarTodos()).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/pedidos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].quantidade").value(2));
+    }
+
+    @Test
+    @WithMockUser(roles = "GERENTE")
     void deveBuscarPedidoPorId() throws Exception {
         PedidoResponseDTO response = new PedidoResponseDTO(1L, 1L, 2L, 2, "Sem cebola", StatusPedido.PREPARANDO, new BigDecimal("20.00"), new BigDecimal("40.00"), LocalDateTime.now());
 
