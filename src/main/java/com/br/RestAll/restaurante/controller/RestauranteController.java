@@ -25,6 +25,13 @@ public class RestauranteController {
         return ResponseEntity.ok(restauranteService.listarTodos());
     }
 
+    @GetMapping("/meu-restaurante")
+    @PreAuthorize("hasRole('DONO')")
+    @Operation(summary = "Busca as informações do restaurante atual (Apenas Dono)")
+    public ResponseEntity<RestauranteResponse> buscarMeuRestaurante() {
+        return ResponseEntity.ok(restauranteService.buscarMeuRestaurante());
+    }
+
     @PutMapping("/meu-restaurante")
     @PreAuthorize("hasRole('DONO')")
     @Operation(summary = "Edita as informações do restaurante atual (Apenas Dono)")
