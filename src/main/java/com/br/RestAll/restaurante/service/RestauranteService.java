@@ -24,6 +24,19 @@ public class RestauranteService {
                 .toList();
     }
 
+    public RestauranteResponse buscarMeuRestaurante() {
+        Long restauranteId = contextoRestaurante.getRestauranteId();
+        
+        if (restauranteId == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não está associado a um restaurante.");
+        }
+
+        Restaurante restaurante = restauranteRepository.findById(restauranteId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurante não encontrado."));
+
+        return RestauranteResponse.fromEntity(restaurante);
+    }
+
     @Transactional
     public RestauranteResponse atualizarMeuRestaurante(AtualizarRestauranteRequest request) {
         Long restauranteId = contextoRestaurante.getRestauranteId();
