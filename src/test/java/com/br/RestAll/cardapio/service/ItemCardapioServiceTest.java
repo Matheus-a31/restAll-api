@@ -34,6 +34,9 @@ class ItemCardapioServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
+    @Mock
+    private com.br.RestAll.aws.S3Service s3Service;
+
     @InjectMocks
     private ItemCardapioService service;
 
@@ -59,7 +62,7 @@ class ItemCardapioServiceTest {
         when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
 
         ItemCardapioRequestDTO request = new ItemCardapioRequestDTO(
-                "Hambúrguer", "Delicioso", "Lanches", new BigDecimal("25.00"), true, "img.jpg");
+                "Hambúrguer", "Delicioso", "Lanches", new BigDecimal("25.00"), true);
 
         ItemCardapio salvo = ItemCardapio.builder()
                 .id(1L).nome("Hambúrguer").descricao("Delicioso").categoria("Lanches")
