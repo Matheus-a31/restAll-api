@@ -1,7 +1,9 @@
 package com.br.RestAll.usuario.service;
 
+import com.br.RestAll.autenticacao.dto.RegistroRequest;
 import com.br.RestAll.comum.context.ContextoRestaurante;
 import com.br.RestAll.restaurante.entity.Restaurante;
+import com.br.RestAll.restaurante.entity.StatusRestaurante;
 import com.br.RestAll.restaurante.repository.RestauranteRepository;
 import com.br.RestAll.usuario.dto.CriarUsuarioRequest;
 import com.br.RestAll.usuario.dto.UsuarioResponse;
@@ -35,11 +37,34 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse criarDono(CriarUsuarioRequest request) {
-        if (request.getRestauranteId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID do restaurante é obrigatório para criar um DONO.");
+    public UsuarioResponse criarDono(RegistroRequest request) {
+        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail já está em uso.");
         }
-        return criarUsuario(request, Perfil.DONO);
+        if (restauranteRepository.findByCnpj(request.getCnpj()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CNPJ já está em uso.");
+        }
+
+        Restaurante restaurante = Restaurante.builder()
+                .nome(request.getNomeRestaurante())
+                .cnpj(request.getCnpj())
+                .status(StatusRestaurante.ATIVO)
+                .build();
+        restaurante = restauranteRepository.save(restaurante);
+
+        Usuario usuario = Usuario.builder()
+                .nome(request.getNome())
+                .email(request.getEmail())
+                .senha(passwordEncoder.encode(request.getSenha()))
+                .perfil(Perfil.DONO)
+                .restaurante(restaurante)
+                .cpf(request.getCpf())
+                .telefone(request.getTelefone())
+                .cargo(null)
+                .build();
+
+        usuario = usuarioRepository.save(usuario);
+        return UsuarioResponse.fromEntity(usuario);
     }
 
     private UsuarioResponse criarUsuario(CriarUsuarioRequest request, Perfil perfil) {
@@ -207,6 +232,9 @@ public class UsuarioService {
         if (request.getCargo() != null) usuario.setCargo(request.getCargo());
         if (request.getTelefone() != null) usuario.setTelefone(request.getTelefone());
         if (request.getAtivo() != null) usuario.setAtivo(request.getAtivo());
+        if (request.getSenha() != null && !request.getSenha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(request.getSenha()));
+        }
 
         usuario = usuarioRepository.save(usuario);
         return UsuarioResponse.fromEntity(usuario);
