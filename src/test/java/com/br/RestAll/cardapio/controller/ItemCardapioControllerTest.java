@@ -46,7 +46,7 @@ class ItemCardapioControllerTest {
         ItemCardapioRequestDTO request = new ItemCardapioRequestDTO("Hambúrguer", "Desc", "Lanches", new BigDecimal("25.00"), true, null);
         ItemCardapioResponseDTO response = new ItemCardapioResponseDTO(1L, "Hambúrguer", "Desc", "Lanches", new BigDecimal("25.00"), true, null);
 
-        when(service.criar(any(ItemCardapioRequestDTO.class))).thenReturn(response);
+        when(service.criar(any(ItemCardapioRequestDTO.class), any())).thenReturn(response);
 
         mockMvc.perform(post("/api/cardapio")
                 .contentType(MediaType.APPLICATION_JSON)

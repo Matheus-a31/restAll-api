@@ -67,7 +67,7 @@ class ItemCardapioServiceTest {
 
         when(repository.save(any(ItemCardapio.class))).thenReturn(salvo);
 
-        ItemCardapioResponseDTO response = service.criar(request);
+        ItemCardapioResponseDTO response = service.criar(request, null);
 
         assertNotNull(response);
         assertEquals("Hambúrguer", response.nome());
