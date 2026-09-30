@@ -44,20 +44,16 @@ class ItemCardapioControllerTest {
     @Test
     @WithMockUser(roles = "ADMINISTRADOR")
     void deveCriarItemCardapioComSucesso() throws Exception {
-        ItemCardapioRequestDTO request = new ItemCardapioRequestDTO("Hambúrguer", "Desc", "Lanches", new BigDecimal("25.00"), true);
         ItemCardapioResponseDTO response = new ItemCardapioResponseDTO(1L, "Hambúrguer", "Desc", "Lanches", new BigDecimal("25.00"), true, null);
 
         when(service.criar(any(ItemCardapioRequestDTO.class), any())).thenReturn(response);
 
-        MockMultipartFile jsonPart = new MockMultipartFile(
-                "item",
-                "",
-                "application/json",
-                objectMapper.writeValueAsString(request).getBytes()
-        );
-
         mockMvc.perform(multipart("/api/cardapio")
-                .file(jsonPart))
+                .param("nome", "Hambúrguer")
+                .param("descricao", "Desc")
+                .param("categoria", "Lanches")
+                .param("preco", "25.00")
+                .param("disponivel", "true"))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
