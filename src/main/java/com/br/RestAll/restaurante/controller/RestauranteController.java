@@ -1,6 +1,7 @@
 package com.br.RestAll.restaurante.controller;
 
 import com.br.RestAll.restaurante.dto.AtualizarRestauranteRequest;
+import com.br.RestAll.restaurante.dto.RestaurantePublicoResponse;
 import com.br.RestAll.restaurante.dto.RestauranteResponse;
 import com.br.RestAll.restaurante.service.RestauranteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,12 @@ public class RestauranteController {
     @Operation(summary = "Lista todos os restaurantes (Apenas Admin do Sistema)")
     public ResponseEntity<List<RestauranteResponse>> listarTodos() {
         return ResponseEntity.ok(restauranteService.listarTodos());
+    }
+
+    @GetMapping("/publico")
+    @Operation(summary = "Lista todos os restaurantes ativos (ID e Nome) para acesso público")
+    public ResponseEntity<List<RestaurantePublicoResponse>> listarPublicos() {
+        return ResponseEntity.ok(restauranteService.listarPublicos());
     }
 
     @GetMapping("/meu-restaurante")

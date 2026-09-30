@@ -67,6 +67,12 @@ public class ItemCardapioService {
                 .toList();
     }
 
+    public List<ItemCardapioResponseDTO> listarPorRestaurante(Long restauranteId) {
+        return repository.findByRestauranteId(restauranteId).stream()
+                .map(ItemCardapioResponseDTO::fromEntity)
+                .toList();
+    }
+
     public ItemCardapioResponseDTO buscarPorId(Long id) {
         ItemCardapio item = getByIdAndRestaurante(id);
         return ItemCardapioResponseDTO.fromEntity(item);

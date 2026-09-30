@@ -39,7 +39,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/autenticacao/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/cardapio").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cardapio/restaurante/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/restaurantes/publico").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/api/docs", "/api/docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/api/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
             )
