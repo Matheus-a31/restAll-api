@@ -35,8 +35,8 @@ public class UsuarioController {
 
     @PostMapping("/dono")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @Operation(summary = "Registra um dono (Acesso: ADMINISTRADOR)")
-    public ResponseEntity<UsuarioResponse> registrarDono(@Valid @RequestBody CriarUsuarioRequest request) {
+    @Operation(summary = "Registra um dono junto com um restaurante (Acesso: ADMINISTRADOR)")
+    public ResponseEntity<UsuarioResponse> registrarDono(@Valid @RequestBody com.br.RestAll.autenticacao.dto.RegistroRequest request) {
         return ResponseEntity.status(201).body(usuarioService.criarDono(request));
     }
 
