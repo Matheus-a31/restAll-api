@@ -19,7 +19,5 @@ public record ItemCardapioRequestDTO(
         @Positive(message = "O preço deve ser maior que zero")
         BigDecimal preco,
 
-        Boolean disponivel,
-
-        String imagem
+        Boolean disponivel
 ) {}
