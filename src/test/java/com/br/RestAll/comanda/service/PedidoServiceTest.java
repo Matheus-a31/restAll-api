@@ -113,4 +113,22 @@ class PedidoServiceTest {
         assertThrows(ResponseStatusException.class, () -> service.criar(request));
         verify(pedidoRepository, never()).save(any(Pedido.class));
     }
+
+    @Test
+    void deveListarTodosPedidos() {
+        when(usuarioRepository.findByEmail("teste@restall.com.br")).thenReturn(Optional.of(usuarioLogado));
+
+        Pedido pedido = Pedido.builder()
+                .id(1L).comanda(comanda).item(item).quantidade(2).observacao("Sem cebola")
+                .status(StatusPedido.PREPARANDO).precoUnitario(new BigDecimal("20.00"))
+                .valorTotal(new BigDecimal("40.00")).build();
+
+        when(pedidoRepository.findByComandaRestauranteId(10L)).thenReturn(List.of(pedido));
+
+        List<PedidoResponseDTO> response = service.listarTodos();
+
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(2, response.get(0).quantidade());
+    }
 }

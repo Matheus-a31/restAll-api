@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,11 +20,12 @@ public class ItemCardapioController {
 
     private final ItemCardapioService service;
 
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
-    public ItemCardapioResponseDTO criar(@RequestBody @Valid ItemCardapioRequestDTO dto) {
-        return service.criar(dto);
+    public ItemCardapioResponseDTO criar(@ParameterObject @ModelAttribute @Valid ItemCardapioRequestDTO dto,
+                                         @RequestPart(value = "imagem", required = false) MultipartFile file) {
+        return service.criar(dto, file);
     }
 
     @GetMapping
@@ -36,10 +39,12 @@ public class ItemCardapioController {
         return service.buscarPorId(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DONO', 'GERENTE', 'FUNCIONARIO')")
-    public ItemCardapioResponseDTO atualizar(@PathVariable Long id, @RequestBody @Valid ItemCardapioRequestDTO dto) {
-        return service.atualizar(id, dto);
+    public ItemCardapioResponseDTO atualizar(@PathVariable Long id, 
+                                             @ParameterObject @ModelAttribute @Valid ItemCardapioRequestDTO dto,
+                                             @RequestPart(value = "imagem", required = false) MultipartFile file) {
+        return service.atualizar(id, dto, file);
     }
 
     @DeleteMapping("/{id}")
