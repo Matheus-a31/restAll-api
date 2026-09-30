@@ -41,7 +41,7 @@ public class ItemCardapioService {
     public ItemCardapioResponseDTO criar(ItemCardapioRequestDTO dto, MultipartFile file) {
         Restaurante restaurante = getRestauranteDoUsuarioLogado();
 
-        String urlImagem = dto.imagem();
+        String urlImagem = null;
         if (file != null && !file.isEmpty()) {
             urlImagem = s3Service.uploadFile(file);
         }
@@ -86,8 +86,6 @@ public class ItemCardapioService {
         
         if (file != null && !file.isEmpty()) {
             item.setImagem(s3Service.uploadFile(file));
-        } else if (dto.imagem() != null) {
-            item.setImagem(dto.imagem());
         }
 
         ItemCardapio atualizado = repository.save(item);
