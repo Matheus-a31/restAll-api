@@ -2,8 +2,10 @@ package com.br.RestAll.restaurante.service;
 
 import com.br.RestAll.comum.context.ContextoRestaurante;
 import com.br.RestAll.restaurante.dto.AtualizarRestauranteRequest;
+import com.br.RestAll.restaurante.dto.RestaurantePublicoResponse;
 import com.br.RestAll.restaurante.dto.RestauranteResponse;
 import com.br.RestAll.restaurante.entity.Restaurante;
+import com.br.RestAll.restaurante.entity.StatusRestaurante;
 import com.br.RestAll.restaurante.repository.RestauranteRepository;
 import com.br.RestAll.usuario.entity.Perfil;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,12 @@ public class RestauranteService {
     public List<RestauranteResponse> listarTodos() {
         return restauranteRepository.findAll().stream()
                 .map(RestauranteResponse::fromEntity)
+                .toList();
+    }
+
+    public List<RestaurantePublicoResponse> listarPublicos() {
+        return restauranteRepository.findByStatus(StatusRestaurante.ATIVO).stream()
+                .map(RestaurantePublicoResponse::fromEntity)
                 .toList();
     }
 
