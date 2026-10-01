@@ -84,7 +84,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,ADMIN_EMAIL,ADMIN_PASSWORD,API_DOMAIN,accessKeyIdAWS,secretKeyAWS,userAWS,bucketNameAWS,regionAWS
+          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,ADMIN_EMAIL,ADMIN_PASSWORD,API_DOMAIN,ACCESS_KEY_ID_AWS,SECRET_KEY_AWS,USER_AWS,BUCKET_NAME_AWS,REGION_AWS
           script: |
             cd /home/ubuntu/restall
             
@@ -95,11 +95,11 @@ jobs:
             echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env
             echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
             echo "API_DOMAIN=$API_DOMAIN" >> .env
-            echo "accessKeyIdAWS=$accessKeyIdAWS" >> .env
-            echo "secretKeyAWS=$secretKeyAWS" >> .env
-            echo "userAWS=$userAWS" >> .env
-            echo "bucketNameAWS=$bucketNameAWS" >> .env
-            echo "regionAWS=$regionAWS" >> .env
+            echo "ACCESS_KEY_ID_AWS=$ACCESS_KEY_ID_AWS" >> .env
+            echo "SECRET_KEY_AWS=$SECRET_KEY_AWS" >> .env
+            echo "USER_AWS=$USER_AWS" >> .env
+            echo "BUCKET_NAME_AWS=$BUCKET_NAME_AWS" >> .env
+            echo "REGION_AWS=$REGION_AWS" >> .env
             
             sudo docker compose up -d --build
             sudo docker image prune -f
@@ -111,8 +111,8 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           API_DOMAIN: ${{ secrets.API_DOMAIN }}
-          accessKeyIdAWS: ${{ secrets.ACCESS_KEY_ID_AWS }}
-          secretKeyAWS: ${{ secrets.SECRET_KEY_AWS }}
-          userAWS: ${{ secrets.USER_AWS }}
-          bucketNameAWS: ${{ secrets.BUCKET_NAME_AWS }}
-          regionAWS: ${{ secrets.REGION_AWS }}
+          ACCESS_KEY_ID_AWS: ${{ secrets.ACCESS_KEY_ID_AWS }}
+          SECRET_KEY_AWS: ${{ secrets.SECRET_KEY_AWS }}
+          USER_AWS: ${{ secrets.USER_AWS }}
+          BUCKET_NAME_AWS: ${{ secrets.BUCKET_NAME_AWS }}
+          REGION_AWS: ${{ secrets.REGION_AWS }}
