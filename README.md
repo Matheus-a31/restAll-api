@@ -8,7 +8,7 @@ O **RestAll** foi projetado para resolver a complexidade do dia a dia de estabel
 Tudo isso suportado por uma arquitetura bem dividida em domínios, segurança via JWT, documentação automatizada via Swagger e uma base sólida de testes de integração usando Testcontainers.
 
 ##  Principais Funcionalidades
-- **Gestão de Cardápio:** Cadastro, edição e consulta de itens (produtos, preços, descrições) disponíveis no restaurante.
+- **Gestão de Cardápio:** Cadastro, edição e consulta de itens (produtos, preços, descrições e fotos) disponíveis no restaurante, com suporte a upload de imagens diretamente para a nuvem via **AWS S3**.
 - **Gestão de Comandas e Pedidos:** Abertura e fechamento de comandas por mesa ou cliente, e controle detalhado de cada pedido vinculado.
 - **Autenticação e Segurança:** Controle de acesso baseado em perfis (roles) utilizando Spring Security e JSON Web Tokens (JJWT).
 - **Gestão de Equipe e Restaurante:** Administração centralizada de funcionários (usuários, com atualização flexível de dados), gerenciamento das configurações do estabelecimento (via rota dedicada `/meu-restaurante`) e suporte à ativação/desativação de restaurantes (soft delete).
@@ -20,6 +20,7 @@ Tudo isso suportado por uma arquitetura bem dividida em domínios, segurança vi
 - **Framework Base:** Spring Boot (Web, Data JPA, Security, Validation)
 - **Banco de Dados:** PostgreSQL
 - **Migrações:** Flyway (Controle de versão do banco de dados)
+- **Armazenamento em Nuvem:** AWS S3 (AWS SDK v2 para upload e hospedagem das imagens do cardápio)
 - **Autenticação:** JWT (jjwt)
 - **Testes:** JUnit 5, Spring Boot Test, e Testcontainers (para testes de integração com banco real)
 - **Documentação:** Springdoc OpenAPI (Swagger UI)
@@ -31,7 +32,8 @@ A aplicação foi dividida em pacotes por domínio (Feature-based), promovendo a
 ```text
 src/main/java/com/br/RestAll/
  ├── autenticacao/    # Lógica de login, geração e validação de tokens JWT
- ├── cardapio/        # Entidades, DTOs e Controllers dos itens do menu
+ ├── aws/             # Integração com AWS S3 (S3Client, upload e geração de URLs de imagens)
+ ├── cardapio/        # Entidades, DTOs e Controllers dos itens do menu (com upload de fotos)
  ├── comanda/         # Gerenciamento de comandas abertas e pedidos
  ├── comum/           # Configurações globais (ex: GlobalExceptionHandler, configs do Swagger)
  ├── despesa/         # Controle financeiro, registros de saídas e gastos
@@ -56,12 +58,18 @@ src/main/java/com/br/RestAll/
    ```
 
 2. **Configuração das Variáveis de Ambiente (.env):**
-   Crie um arquivo `.env` na raiz do projeto para configurar o acesso ao banco e o JWT. Exemplo de conteúdo:
+   Crie um arquivo `.env` na raiz do projeto para configurar o acesso ao banco, JWT e AWS S3. Exemplo de conteúdo:
    ```env
    DB_URL=jdbc:postgresql://localhost:5432/restall_db
    DB_USERNAME=usuario
    DB_PASSWORD=senha
    JWT_SECRET=sua-chave-secreta-muito-segura-aqui
+
+   # AWS S3 (Armazenamento de Imagens)
+   accessKeyIdAWS=sua_access_key_aws
+   secretKeyAWS=sua_secret_key_aws
+   regionAWS=sa-east-1
+   bucketNameAWS=seu-bucket-restall
    ```
 
 3. **Configure o Banco de Dados:**
